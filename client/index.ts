@@ -1,1 +1,3 @@
-// TODO implement main client logic
+document.addEventListener("DOMContentLoaded", () => {
+    console.log('Document was loaded');
+});

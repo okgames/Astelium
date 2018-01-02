@@ -1,12 +1,10 @@
 import typescript from 'rollup-plugin-typescript2';
 import commonjs from 'rollup-plugin-commonjs';
 import nodeResolve from 'rollup-plugin-node-resolve';
-import builtins from 'rollup-plugin-node-builtins';
 import uglify from 'rollup-plugin-uglify-es';
-
 export default {
-    entry: './client/index.ts',
-    dest: 'index.js',
+    entry: './index.ts',
+    dest: './scripts/index.js',
     format: 'cjs',
     plugins: [
         nodeResolve({
@@ -14,11 +12,12 @@ export default {
             main: true,
             preferBuiltins: true
         }),
-        typescript(require('typescript')),
+        typescript({
+            tsconfig: '../tsconfig.json'
+        }),
         commonjs({
             extensions: ['.js', '.ts']
-        }),
-        builtins(),
+        }),       
         uglify({
             mangle: true,
             compress: {
