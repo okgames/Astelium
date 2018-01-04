@@ -27,4 +27,6 @@ export default abstract class Menu extends Model {
     get actionItems() {
         return this._actionItems;
     }
+
+    protected abstract registerEvents(): void;
 }

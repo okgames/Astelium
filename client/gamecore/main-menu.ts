@@ -22,6 +22,10 @@ export default class MainMenu extends Menu {
         });
         this.HTMLTemplate += `</div>`;
         document.querySelector(selector).innerHTML = this.HTMLTemplate;        
+        this.registerEvents();
+    }
+
+    protected registerEvents(): void {
         this.actionItems.forEach((value, key) => {            
             document.querySelector(`#action-${key.substring(0, 2)}`).addEventListener('click', value);
         });
