@@ -4,7 +4,7 @@ import nodeResolve from 'rollup-plugin-node-resolve';
 import uglify from 'rollup-plugin-uglify-es';
 export default {
     entry: './index.ts',
-    dest: './scripts/index.js',
+    dest: './static/scripts/index.js',
     format: 'cjs',
     plugins: [
         nodeResolve({

@@ -3,7 +3,7 @@ import * as path from 'path'
 
 const server = new Server();
 
-server.staticFolders = ["client/views", "client/scripts", "client/styles"];
+server.staticResources = ["client/static/views", "client/static/scripts", "client/static/styles"];
 
 server.restMapping = new Map<string, RestCallback>([
     ['/', (req, res) => {

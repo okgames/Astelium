@@ -1,7 +1,7 @@
 import express from 'express'
 
 export interface RestCallback {
-    (req: any, res?: any, err?: Error): void
+    (req?: any, res?: any, err?: Error): void
 }
 
 export class Server {
@@ -9,16 +9,16 @@ export class Server {
     private _host: string;
     private _port: number;
     private _restMapping: Map<string, RestCallback>;
-    private _staticFolders: string[];
+    private _staticResources: string[];
 
     constructor(host?: string, port?: number, restMapping?: Map<string,
-         RestCallback>, staticFolders?: string[]) {
+         RestCallback>, staticResources?: string[]) {
         this._host = host || 'localhost';
         this._port = port || 3000;        
         this._restMapping = restMapping || new Map<string, RestCallback>([
             [this._host, (req, res) => res.send('Whitelabel page...')]
         ]);
-        this._staticFolders = staticFolders || ['public', 'static'];
+        this._staticResources = staticResources || ['public', 'static'];
     }
 
     get host(): string {
@@ -45,18 +45,18 @@ export class Server {
         this._restMapping = restMapping;
     }
 
-    get staticFolders(): string[] {
-        return this._staticFolders;
+    get staticResources(): string[] {
+        return this._staticResources;
     }
 
-    set staticFolders(staticFolders: string[]) {
-        this._staticFolders = staticFolders;
+    set staticResources(staticResources: string[]) {
+        this._staticResources = staticResources;
     }
 
     public start(): void {       
         const SERVER_INSTANCE = express();
         const ROOT_DIRECTORY = require('app-root-dir').get();        
-        this._staticFolders.forEach((folder) => {           
+        this._staticResources.forEach((folder) => {           
             SERVER_INSTANCE.use(express.static(`${ROOT_DIRECTORY}/${folder}`));
         })       
         this._restMapping.forEach((callback, url) => {            
