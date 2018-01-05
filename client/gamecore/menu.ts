@@ -28,5 +28,7 @@ export default abstract class Menu extends Model {
         return this._actionItems;
     }
 
-    protected abstract registerEvents(): void;
+    protected abstract initializeView(menuSelector: string, actionItems: Map<string, Callback>): void;
+
+    protected abstract registerEvents(actionItems: Map<string, Callback>): void;
 }
