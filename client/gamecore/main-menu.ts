@@ -21,9 +21,9 @@ export default class MainMenu extends Menu {
                 console.log('Options')
             }],
             ['Exit', () => {
-                //new Audio('/exit.mp3').play();    
+                // new Audio('/exit.mp3').play();    
                 console.log('Exit')
-                menuAudio.pause();
+                // menuAudio.pause();
             }],
         ])
         document.querySelector(`#${selector}`).innerHTML = this.HTMLTemplate;
