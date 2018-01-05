@@ -1,40 +1,49 @@
 body {
     background: black;
+    height: 100%;
+    width: 100%;
+}
+
+#renderTarget {
+    height: 100%;
+    width: 100%;
 }
 
 @font-face {
-    font-family: 'bloody'; 
-    src: url('/youmurdererbb_reg.otf'); 
+    font-family: bloody; 
+    src: url(/youmurdererbb_reg.otf); 
 }
 
-.header {
+.ast-header {
     text-align: center;
-    font-family: 'bloody';
+    font-family: bloody;
     color: red;
     font-size: 200px;
 }
 
-.logo {  
+.ast-logo {  
     margin-left: auto;
     margin-right: auto;    
     height: 400px;
     width: 500px;
-    content: url("/Astelium.jpg")
-}
-
-.main-menu {
-    display: flex;
+    content: url(/Astelium.jpg)
 }
 
 button {
     padding: 10px;
     border: none;
     background: black;    
-    font-family: 'bloody';
+    font-family: bloody;
     color: red;
     font-size: 70px;
 }
 
 .action-item {
     text-align: center;
+}
+
+#ast-layout {
+    position: fixed;
+    height: 100%;
+    width: 100%;    
 }

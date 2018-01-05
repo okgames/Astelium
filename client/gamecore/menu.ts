@@ -1,12 +1,14 @@
 import Model from "client/gamecore/model";
 import { Callback } from "client/gamecore/common";
+import AudioManager from "client/gamecore/audio-manager";
 
 export default abstract class Menu extends Model {
     
     private _actionItems: Map<string, Callback>;
 
-    constructor(actionItems?: Map<string, Callback>) {
-        super();
+    constructor(HTMLTemplate?: string, audioManager?: AudioManager,
+         actionItems?: Map<string, Callback>) {
+        super(HTMLTemplate, audioManager);
         this._actionItems = actionItems || new Map([
             ["Item1", () => {
                 console.log("Item 1 was chosen")
