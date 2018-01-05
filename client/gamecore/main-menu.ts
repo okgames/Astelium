@@ -7,30 +7,37 @@ export default class MainMenu extends Menu {
 
     public build(selector?: string): void {
         this.HTMLTemplate = `<div id="${this.menuSelector}"></div>`;
+        let menuAudio = new Audio('/menu.mp3');  
+        menuAudio.loop = true;  
+        menuAudio.play();
         this.actionItems = new Map<string, Callback>([
             ['New game', () => {             
                 this.initializeView(`#${this.menuSelector}`, this.getNewGameItems());      
-                const audio = new Audio('/devil_laugh.mp3');
-                audio.play();  
+                new Audio('/newgame.mp3').play();               
                 console.log('New game');               
             }],
             ['Options', () => {
+                new Audio('/options.mp3').play();    
                 console.log('Options')
             }],
-            ['Quit', () => {
-                console.log('Quit')
+            ['Exit', () => {
+                //new Audio('/exit.mp3').play();    
+                console.log('Exit')
+                menuAudio.pause();
             }],
         ])
         document.querySelector(`#${selector}`).innerHTML = this.HTMLTemplate;
-        this.initializeView(`#${this.menuSelector}`, this.actionItems);       
+        this.initializeView(`#${this.menuSelector}`, this.actionItems);           
     }
 
     private getNewGameItems(): Map<string, Callback> {
         return new Map<string, Callback>([
             ['SinglePlayer', () => {
+                new Audio('/singleplayer.mp3').play();    
                 console.log('Single');
             }],
             ['Multiplayer', () => {
+                new Audio('/multiplayer.mp3').play();    
                 console.log('Multi');
             }], 
             ['Back', () => {
