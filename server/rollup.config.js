@@ -5,9 +5,11 @@ import nodeResolve from 'rollup-plugin-node-resolve';
 import uglify from 'rollup-plugin-uglify-es';
 
 export default {
-    entry: './index.ts',
-    dest: 'index.js',
-    format: 'cjs',
+    input: './index.ts',
+    output: {
+        file: 'index.js',
+        format: 'cjs'
+    },   
     plugins: [
         nodeResolve({
             jsnext: true,

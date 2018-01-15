@@ -1,22 +1,24 @@
 import Model from "client/gamecore/model";
 import { Callback } from "client/gamecore/common";
-import AudioManager from "client/gamecore/audio-manager";
+import AudioManager from "client/gamecore/audiomanager";
+import GameStateManager from "client/gamecore/gamestatemanager";
 
 export default abstract class Menu extends Model {
     
     private _actionItems: Map<string, Callback>;
 
-    constructor(HTMLTemplate?: string, audioManager?: AudioManager,
+    constructor(selector?: string, audioManager?: AudioManager, HTMLTemplate?: string,
+         stateManager?: GameStateManager, autoRendering?: boolean, 
          actionItems?: Map<string, Callback>) {
-        super(HTMLTemplate, audioManager);
+        super(selector, audioManager, HTMLTemplate, stateManager, autoRendering);
         this._actionItems = actionItems || new Map([
-            ["Item1", () => {
+            ["Item 1", () => {
                 console.log("Item 1 was chosen")
             }],
-            ["Item2", () => {
+            ["Item 2", () => {
                 console.log("Item 2 was chosen")
             }],
-            ["Item3", () => {
+            ["Item 3", () => {
                 console.log("Item 3 was chosen")
             }]
         ]);
@@ -30,7 +32,7 @@ export default abstract class Menu extends Model {
         return this._actionItems;
     }
 
-    protected abstract initializeView(menuSelector: string, actionItems: Map<string, Callback>): void;
+    protected abstract initializeView(actionItems: Map<string, Callback>): void;
 
-    protected abstract registerEvents(actionItems: Map<string, Callback>): void;
+    protected abstract registerEvents(): void;
 }
