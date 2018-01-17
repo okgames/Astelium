@@ -7,10 +7,10 @@ export default abstract class Menu extends Model {
     
     private _actionItems: Map<string, Callback>;
 
-    constructor(selector?: string, audioManager?: AudioManager, HTMLTemplate?: string,
-         stateManager?: GameStateManager, autoRendering?: boolean, 
+    constructor(selector?: string, audioManager?: AudioManager,
+         HTMLTemplate?: string, autoRendering?: boolean, 
          actionItems?: Map<string, Callback>) {
-        super(selector, audioManager, HTMLTemplate, stateManager, autoRendering);
+        super(selector, audioManager, HTMLTemplate, autoRendering);
         this._actionItems = actionItems || new Map([
             ["Item 1", () => {
                 console.log("Item 1 was chosen")

@@ -1,16 +1,25 @@
 import Mover from "client/gamecore/mover";
 import Layout from "client/gamecore/layout";
+import GameObject from "client/gamecore/gameobject";
+import { APP_ENGINE_INSTANCE } from "client/data/astelium-engine";
+import AudioManager from "client/gamecore/audiomanager";
+import { GameObjectPosition } from "client/gamecore/common";
 
 export default class AsteliumPlayer extends Mover {
- 
-    
+     
+    constructor(selector?: string, audioManager?: AudioManager,
+        HTMLTemplate?: string, autoRendering?: boolean, position?: GameObjectPosition) {
+        super(selector, audioManager, HTMLTemplate, autoRendering, position);
+        this.init();
+    }
+
     public init(): void {  
         this.addMoveListeners();
         this.addActionListeners();
     }
 
     protected addMoveListeners(): void {      
-        document.addEventListener('keypress', (evt) => {            
+        document.addEventListener('keypress', (evt) => {         
             switch(evt.key) {
                 case 'w': {                                  
                     this.moveUp(3);
@@ -35,13 +44,19 @@ export default class AsteliumPlayer extends Mover {
     }
 
     protected addActionListeners(): void {
-        document.addEventListener('keydown', (evt) => {                       
+        document.addEventListener('keydown', (evt) => {       
+            const parentModel = APP_ENGINE_INSTANCE.getModel(this.parentSelector);              
             if(evt.key === 'Enter') {                  
                 console.log('Action is called');
             }        
-            if(evt.key === 'Escape')  {        
-                this.audioManager.playSelected(['/soul.mp3', '/menu.mp3']);                     
-                (this.parentModel as Layout).renderSelectedChildren([
+            if(evt.key === 'Escape')  {                
+                (parentModel as Layout).stateManager.currentState = {
+                    gameObjects: parentModel.childModels
+                    .filter(child => child instanceof GameObject) as GameObject[],
+                    dom: document.querySelector(`#${parentModel.selector}`).outerHTML                     
+                }          
+                this.audioManager.playSelected(['/soul.mp3', '/menu.mp3']);                       
+                (parentModel as Layout).renderSelectedChildren([
                     'ast-menu'
                 ]);                                          
             }      
@@ -54,7 +69,6 @@ export default class AsteliumPlayer extends Mover {
         (document.querySelector(`#${this.selector}`) as HTMLElement).style.top 
         = `${this.position.y}px`;
         (document.querySelector(`#${this.selector}`) as HTMLElement).style.left 
-        = `${this.position.x}px`;
-        this.init();
+        = `${this.position.x}px`;        
     }
 }

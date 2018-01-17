@@ -4,20 +4,18 @@ import GameStateManager from "client/gamecore/gamestatemanager";
 export default abstract class Model {
    
     private _selector: string;
+    private _parentSelector: string;
     private _HTMLTemplate: string;
-    private _audioManager: AudioManager;
-    private _stateManager: GameStateManager;
-    private _parentModel: Model;
+    private _audioManager: AudioManager;      
     private _childModels: Model[];  
     private _autoRendering: boolean;
     protected static readonly EMPTY_HTML_TEMPLATE: string = `<div>Empty model</div>`;   
 
     constructor(selector?: string, audioManager?: AudioManager,
-        HTMLTemplate?: string, stateManager?: GameStateManager, autoRendering?: boolean) {
+        HTMLTemplate?: string, autoRendering?: boolean) {
        this._selector = selector;
        this._audioManager = audioManager || new AudioManager(new Map([]));
-       this._HTMLTemplate = HTMLTemplate || Model.EMPTY_HTML_TEMPLATE; 
-       this._stateManager = stateManager || new GameStateManager(this._HTMLTemplate, []);   
+       this._HTMLTemplate = HTMLTemplate || Model.EMPTY_HTML_TEMPLATE;        
        this._autoRendering = autoRendering || false;
     } 
 
@@ -43,22 +41,14 @@ export default abstract class Model {
 
     set audioManager(audioManager: AudioManager) {
         this._audioManager = audioManager;
+    }  
+
+    get parentSelector() {
+        return this._parentSelector;
     }
 
-    get stateManager() {
-        return this._stateManager;
-    }
- 
-    set stateManager(stateManager: GameStateManager) {
-        this._stateManager = stateManager; 
-    } 
-
-    get parentModel() {
-        return this._parentModel;
-    }
-
-    set parentModel(parentModel: Model) {
-        this._parentModel = parentModel;
+    set parentSelector(parentSelector: string) {
+        this._parentSelector = parentSelector;
     }
 
     get childModels() {

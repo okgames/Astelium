@@ -14,21 +14,27 @@ server.staticResources = [
 ];
 
 const saveFile = (req, res) => {
-    console.log(req.body);
-    const filepath = `${__dirname}/saves/x.json`;   
-    console.log(filepath);   
-    const stream = fs.createWriteStream(filepath);
-    stream.once('open', (fd) => {
-        stream.write(JSON.stringify(req.body));      
-        stream.end();
+    console.log(req.body);   
+    fs.appendFile(`${__dirname}/saves/${req.body.name}.json`, JSON.stringify(req.body), (err) => {
+        if(err) {
+            throw err;
+        } 
+        console.log('Game was saved!');
     });   
+}
+
+const loadFile = (req, res) => {   
+    console.log(req.body);
+    //const content = fs.readFileSync(`${__dirname}/saves/${req.body.name}.json`, 'utf8');    
+    return {x: 23};
 }
 
 server.restMapping = new Map<HttpRequest, RestCallback>([
     [{url: '/', method: RequestMethod.GET}, (req, res) => {
         res.sendFile(`/index.html`);
     }],
-    [{url: '/save', method: RequestMethod.POST}, saveFile]
+    [{url: '/save', method: RequestMethod.POST}, saveFile],
+    [{url: '/load', method: RequestMethod.POST}, loadFile],
 ]);
 
 server.start();

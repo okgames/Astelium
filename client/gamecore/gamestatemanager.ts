@@ -1,11 +1,11 @@
-import { SavedGame } from "client/gamecore/common";
+import { SavedGame, GameState } from "client/gamecore/common";
 
 export default class GameStateManager {
 
-    private _currentState: string;
+    private _currentState: GameState;
     private _savedGames: SavedGame[];
     
-    constructor(currentState?: string, savedGames?: SavedGame[]) {
+    constructor(currentState?: GameState, savedGames?: SavedGame[]) {
         this._currentState = currentState || null;
         this._savedGames = savedGames || [];
     }
@@ -14,7 +14,7 @@ export default class GameStateManager {
         return this.currentState;
     }
 
-    set currentState(currentState: string) {
+    set currentState(currentState: GameState) {
         this._currentState = currentState;
     }
 
@@ -26,30 +26,44 @@ export default class GameStateManager {
         this._savedGames = savedGames;
     }
 
-    public save(saveName: string, url: string): void {
-        console.log('Save');
+    public save(saveName: string, url: string): void {        
         const save = {
-            date: new Date().toString(),
+            date: new Date().toLocaleTimeString("en-us", {
+                weekday: "long", year: "numeric", month: "short",  
+                day: "numeric", hour: "2-digit", minute: "2-digit",
+                second: "2-digit"  
+            }),
             state: this._currentState,
             name: saveName
         }         
+        console.log('Save', save);
         fetch('/save',
         {
             method: 'POST',
-            body: JSON.stringify(save),
+            body: JSON.stringify(save),               
             headers: new Headers({
                 'Content-Type': 'application/json'
             })
         })
         .then((res) => { 
             return res.json(); 
-        })
-        .then((data) => {
-             console.log(data);
-        })     
+        });
+        this._savedGames.push(save);       
     }
 
-    public load(saveName: string, url: string): void {
-        console.log('Load');
+    public load(saveName: string, url: string): void {   
+        console.log('Loading is in progress...');   
+        // fetch('/load',
+        // {
+        //     method: 'POST',   
+        //     body: JSON.stringify({name: saveName}),
+        //     headers: new Headers({
+        //         'Content-Type': 'application/json'
+        //     })
+        // })
+        // .then((res) => { 
+        //     console.log('Res', res);
+        //     return res.json(); 
+        // });        
     }
 } 
