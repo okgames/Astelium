@@ -1,7 +1,7 @@
 import Mover from "client/gamecore/mover";
 import Layout from "client/gamecore/layout";
 import GameObject from "client/gamecore/gameobject";
-import { APP_ENGINE_INSTANCE, GAME_STATE_MANAGER_ID, AUDIO_MANAGER_ID, GAME_MENU_ID } from "client/data/astelium-engine";
+import { APP_ENGINE_INSTANCE, AsteliumSelector} from "client/data/astelium-engine";
 import AudioManager from "client/gamecore/audiomanager";
 import { GameObjectPosition } from "client/gamecore/common";
 import AsteliumGameStateManager from "client/data/astelium-gamestatemanager";
@@ -51,15 +51,16 @@ export default class AsteliumPlayer extends Mover {
                 console.log('Action is called');
             }        
             if(evt.key === 'Escape')  {                    
-                APP_ENGINE_INSTANCE.getManager<AsteliumGameStateManager>(GAME_STATE_MANAGER_ID).currentState = {
+                APP_ENGINE_INSTANCE.getManager<AsteliumGameStateManager>(AsteliumSelector.GAME_STATE_MANAGER_ID)
+                .currentState = {
                     gameObjects: parentModel.childModels
                     .filter(child => child instanceof GameObject) as GameObject[],
                     dom: document.querySelector(`#${parentModel.selector}`).outerHTML                     
                 }          
-                APP_ENGINE_INSTANCE.getManager<AsteliumAudioManager>(AUDIO_MANAGER_ID)
+                APP_ENGINE_INSTANCE.getManager<AsteliumAudioManager>(AsteliumSelector.AUDIO_MANAGER_ID)
                 .playSelected(['/soul.mp3', '/menu.mp3']);                       
                 (parentModel as Layout).renderSelectedChildren([
-                    GAME_MENU_ID
+                    AsteliumSelector.GAME_MENU_ID
                 ]);                                          
             }      
         })
