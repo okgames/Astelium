@@ -94,10 +94,11 @@ export default class AsteliumMenu extends Menu {
     private getSavedGamesItems(): Map<string, Callback> {
         const parentModel = APP_ENGINE_INSTANCE.getModel(this.parentSelector); 
         const stateManager = APP_ENGINE_INSTANCE.getManager<AsteliumGameStateManager>(GAME_STATE_MANAGER_ID);
-        let itemsMap = new Map<string, Callback>();        
+        let itemsMap = new Map<string, Callback>(); 
+        stateManager.showAllSaves('saves', '/showAllSaves');
         stateManager.savedGames.forEach((saved, index) => {
             itemsMap.set(`${index + 1}-${saved.name}`, () => {               
-                stateManager.load(saved.name, '/load')
+                stateManager.load(saved.name, '/load').then(save => console.log('Save: ', save));
             })
         });      
         itemsMap.set('Back', () => {          
@@ -107,8 +108,7 @@ export default class AsteliumMenu extends Menu {
             (parentModel as Layout).renderSelectedChildren([
                 PLAYER_I_ID, ADVICER_ID
             ]);          
-        });
-        console.log('SavedGames', itemsMap);
+        });      
         return itemsMap;
     }
 

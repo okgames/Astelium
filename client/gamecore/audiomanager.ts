@@ -40,8 +40,7 @@ export default class AudioManager extends Manager {
     }    
 
     public playSelected(srcUrls: string[], loop?: boolean, volume?: number) {       
-        this.audioMap.forEach((aud, url) => {
-            console.log(srcUrls, url)
+        this.audioMap.forEach((aud, url) => {           
             if(srcUrls.includes(url)) {     
                 aud.loop = loop || false;      
                 aud.volume = volume || this._generalVolume || 1.0;    

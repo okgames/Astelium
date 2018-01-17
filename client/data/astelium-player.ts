@@ -50,8 +50,7 @@ export default class AsteliumPlayer extends Mover {
             if(evt.key === 'Enter') {                  
                 console.log('Action is called');
             }        
-            if(evt.key === 'Escape')  {     
-                console.log(parentModel);           
+            if(evt.key === 'Escape')  {                    
                 APP_ENGINE_INSTANCE.getManager<AsteliumGameStateManager>(GAME_STATE_MANAGER_ID).currentState = {
                     gameObjects: parentModel.childModels
                     .filter(child => child instanceof GameObject) as GameObject[],

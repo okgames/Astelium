@@ -53,19 +53,35 @@ export default class GameStateManager extends Manager {
         this._savedGames.push(save);       
     }
 
-    public load(saveName: string, url: string): void {   
-        console.log('Loading is in progress...');   
-        // fetch('/load',
-        // {
-        //     method: 'POST',   
-        //     body: JSON.stringify({name: saveName}),
-        //     headers: new Headers({
-        //         'Content-Type': 'application/json'
-        //     })
-        // })
-        // .then((res) => { 
-        //     console.log('Res', res);
-        //     return res.json(); 
-        // });        
+    public showAllSaves(dirName: string, url: string): void {           
+        fetch('/showAllSaves',
+        {
+            method: 'POST',   
+            body: JSON.stringify({name: dirName}),
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            })
+        })
+        .then((res) => { 
+            console.log('Response', res.body);
+            return res.json(); 
+        });        
+    }
+
+    public load(saveName: string, url: string): Promise<SavedGame> {           
+        return fetch('/load',
+        {
+            method: 'POST',   
+            body: JSON.stringify({name: saveName}),
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            })
+        })
+        .then((res) => {             
+            return res.json(); 
+        })
+        .then((data) => {
+            return data; 
+        })       
     }
 } 

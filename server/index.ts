@@ -23,10 +23,18 @@ const saveFile = (req, res) => {
     });   
 }
 
-const loadFile = (req, res) => {   
-    console.log(req.body);
-    //const content = fs.readFileSync(`${__dirname}/saves/${req.body.name}.json`, 'utf8');    
-    return {x: 23};
+const showAllSaveFiles = (req, res) => {
+    
+}
+
+const loadFile = (req, res) => {    
+    fs.readFile(`${__dirname}/saves/${req.body.name}.json`, 'utf8', (err, data) => {
+        if(err) {
+            throw err;
+        }        
+        res.setHeader('Content-type', 'application/json');
+        res.send(JSON.parse(data)); 
+    });     
 }
 
 server.restMapping = new Map<HttpRequest, RestCallback>([
@@ -34,6 +42,7 @@ server.restMapping = new Map<HttpRequest, RestCallback>([
         res.sendFile(`/index.html`);
     }],
     [{url: '/save', method: RequestMethod.POST}, saveFile],
+    [{url: '/showAllSaves', method: RequestMethod.POST}, showAllSaveFiles],
     [{url: '/load', method: RequestMethod.POST}, loadFile],
 ]);
 
