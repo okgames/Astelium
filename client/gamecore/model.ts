@@ -5,18 +5,16 @@ export default abstract class Model {
    
     private _selector: string;
     private _parentSelector: string;
-    private _HTMLTemplate: string;
-    private _audioManager: AudioManager;      
+    private _HTMLTemplate: string;     
     private _childModels: Model[];  
     private _autoRendering: boolean;
     protected static readonly EMPTY_HTML_TEMPLATE: string = `<div>Empty model</div>`;   
 
-    constructor(selector?: string, audioManager?: AudioManager,
-        HTMLTemplate?: string, autoRendering?: boolean) {
-       this._selector = selector;
-       this._audioManager = audioManager || new AudioManager(new Map([]));
+    constructor(selector?: string, HTMLTemplate?: string, autoRendering?: boolean, childModels?: Model[]) {
+       this._selector = selector;      
        this._HTMLTemplate = HTMLTemplate || Model.EMPTY_HTML_TEMPLATE;        
        this._autoRendering = autoRendering || false;
+       this._childModels = childModels || [];
     } 
 
     get selector() {
@@ -33,15 +31,7 @@ export default abstract class Model {
 
     set HTMLTemplate(HTMLTemplate: string) {
         this._HTMLTemplate = HTMLTemplate;
-    }
-
-    get audioManager() {
-        return this._audioManager;
-    }
-
-    set audioManager(audioManager: AudioManager) {
-        this._audioManager = audioManager;
-    }  
+    }    
 
     get parentSelector() {
         return this._parentSelector;

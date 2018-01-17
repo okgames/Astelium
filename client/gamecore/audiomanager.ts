@@ -1,11 +1,12 @@
-import { isUndefined } from "util";
+import Manager from "client/gamecore/manager";
 
-export default class AudioManager {
+export default class AudioManager extends Manager {
 
     private _generalVolume: number;
     private _audioMap: Map<string, HTMLAudioElement>;
 
-    constructor(audioMap?: Map<string, HTMLAudioElement>) {
+    constructor(id: string, audioMap?: Map<string, HTMLAudioElement>) {
+        super(id);
         this._audioMap = audioMap || new Map<string, HTMLAudioElement>([]);
     }
     

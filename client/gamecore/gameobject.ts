@@ -7,10 +7,9 @@ export default abstract class GameObject extends Model {
 
     private _position: GameObjectPosition;
 
-    constructor(selector?: string, audioManager?: AudioManager,
-        HTMLTemplate?: string, autoRendering?: boolean, 
-        position?: GameObjectPosition) {
-        super(selector, audioManager, HTMLTemplate, autoRendering);
+    constructor(selector?: string, HTMLTemplate?: string, autoRendering?: boolean,
+         position?: GameObjectPosition) {
+        super(selector, HTMLTemplate, autoRendering);
         this._position = position;       
     }  
 

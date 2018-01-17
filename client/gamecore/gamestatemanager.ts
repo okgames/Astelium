@@ -1,11 +1,13 @@
 import { SavedGame, GameState } from "client/gamecore/common";
+import Manager from "client/gamecore/manager";
 
-export default class GameStateManager {
+export default class GameStateManager extends Manager {
 
     private _currentState: GameState;
     private _savedGames: SavedGame[];
     
-    constructor(currentState?: GameState, savedGames?: SavedGame[]) {
+    constructor(id: string, currentState?: GameState, savedGames?: SavedGame[]) {
+        super(id);
         this._currentState = currentState || null;
         this._savedGames = savedGames || [];
     }

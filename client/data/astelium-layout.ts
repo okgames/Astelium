@@ -4,12 +4,13 @@ import AsteliumPlayer from "client/data/astelium-player";
 import Advicer from "client/data/astelium-advicer";
 import GameStateManager from "client/gamecore/gamestatemanager";
 import AsteliumMenu from "client/data/astelium-menu";
+import { APP_ENGINE_INSTANCE, AUDIO_MANAGER_ID } from "client/data/astelium-engine";
+import AsteliumAudioManager from "client/data/astelium-audiomanager";
 
 export default class AsteliumGameLayout extends Layout {
 
-    constructor(selector?: string, audioManager?: AudioManager,
-        HTMLTemplate?: string, autoRendering?: boolean, stateManager?: GameStateManager) {
-        super(selector, audioManager, HTMLTemplate, autoRendering, stateManager);           
+    constructor(selector?: string, HTMLTemplate?: string, autoRendering?: boolean) {
+        super(selector, HTMLTemplate, autoRendering);           
     }
 
     public renderChild(childSelector: string) {
@@ -36,6 +37,6 @@ export default class AsteliumGameLayout extends Layout {
                 }                   
             });
         }            
-        this.audioManager.playSelected([audioTrack]);         
+        APP_ENGINE_INSTANCE.getManager<AsteliumAudioManager>(AUDIO_MANAGER_ID).playSelected([audioTrack]);         
     }
 }

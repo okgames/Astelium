@@ -6,19 +6,9 @@ export default abstract class Layout extends Model {
 
     private _stateManager: GameStateManager;
 
-    constructor(selector?: string, audioManager?: AudioManager,
-        HTMLTemplate?: string, autoRendering?: boolean, stateManager?: GameStateManager) {
-       super(selector, audioManager, HTMLTemplate, autoRendering);
-       this._stateManager = stateManager;
-    } 
-
-    get stateManager() {
-        return this._stateManager;
-    }
- 
-    set stateManager(stateManager: GameStateManager) {
-        this._stateManager = stateManager; 
-    } 
+    constructor(selector?: string, HTMLTemplate?: string, autoRendering?: boolean) {
+       super(selector, HTMLTemplate, autoRendering);     
+    }  
 
     public abstract renderChild(childSelector: string);
 

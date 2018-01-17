@@ -4,13 +4,15 @@ import AsteliumGameStateManager from "client/data/astelium-gamestatemanager";
 import Model from "client/gamecore/model";
 import Layout from "client/gamecore/layout";
 import GameObject from "client/gamecore/gameobject";
-import { APP_ENGINE_INSTANCE } from "client/data/astelium-engine";
+import { APP_ENGINE_INSTANCE, AUDIO_MANAGER_ID, GAME_STATE_MANAGER_ID,
+     PLAYER_I_ID, ADVICER_ID } from "client/data/astelium-engine";
+import AsteliumAudioManager from "client/data/astelium-audiomanager";
 
 
 export default class AsteliumMenu extends Menu {  
 
     public render(renderToselector?: string): void {      
-        this.audioManager.play('/menu.mp3', true);       
+        APP_ENGINE_INSTANCE.getManager<AsteliumAudioManager>(AUDIO_MANAGER_ID).play('/menu.mp3', true);       
         if(this.HTMLTemplate === Model.EMPTY_HTML_TEMPLATE) {                   
             this.initializeView(this.getBasicItems());                           
         } else {
@@ -24,14 +26,14 @@ export default class AsteliumMenu extends Menu {
             ['New game', () => {             
                 this.initializeView(this.getNewGameItems());   
                 this.registerEvents();
-                this.audioManager.play('/newgame.mp3');                     
+                APP_ENGINE_INSTANCE.getManager<AsteliumAudioManager>(AUDIO_MANAGER_ID).play('/newgame.mp3');                     
             }],
             ['Load', () => {               
                 this.initializeView(this.getSavedGamesItems())
                 this.registerEvents();
             }],
             ['Options', () => {        
-                this.audioManager.play('/options.mp3');                          
+                APP_ENGINE_INSTANCE.getManager<AsteliumAudioManager>(AUDIO_MANAGER_ID).play('/options.mp3');                          
             }],
         ])
     }
@@ -42,13 +44,15 @@ export default class AsteliumMenu extends Menu {
                 const parentModel = APP_ENGINE_INSTANCE.getModel(this.parentSelector);                    
                 this.initializeView(this.getInGameItems());  
                 this.registerEvents(); 
-                this.audioManager.playSelected(['/singleplayer.mp3', '/location.mp3']);                  
+                APP_ENGINE_INSTANCE.getManager<AsteliumAudioManager>(AUDIO_MANAGER_ID)
+                .playSelected(['/singleplayer.mp3', '/location.mp3']);                  
                 (parentModel as Layout).renderSelectedChildren([
-                    'ast-player', 'ast-advicer'
+                    PLAYER_I_ID, ADVICER_ID
                 ]);             
             }],
             ['Multiplayer', () => {
-                this.audioManager.play('/multiplayer.mp3');              
+                APP_ENGINE_INSTANCE.getManager<AsteliumAudioManager>(AUDIO_MANAGER_ID)
+                .play('/multiplayer.mp3');              
             }], 
             ['Back', () => {              
                 this.initializeView(this.getBasicItems());
@@ -61,14 +65,16 @@ export default class AsteliumMenu extends Menu {
         const parentModel = APP_ENGINE_INSTANCE.getModel(this.parentSelector); 
         return new Map<string, Callback>([
             ['Save', () => {                               
-                (parentModel as Layout).stateManager.save(new Date().toLocaleTimeString("en-us", 
+                APP_ENGINE_INSTANCE.getManager<AsteliumGameStateManager>(GAME_STATE_MANAGER_ID)
+                .save(new Date().toLocaleTimeString("en-us", 
                 {
                     year: "numeric", month: "short", day: "numeric",
                     hour: "2-digit", minute: "2-digit", second: "2-digit"  
                 }).replace(/\:/g, '-'), '/save');
-                this.audioManager.playSelected(['/location.mp3']);                  
+                APP_ENGINE_INSTANCE.getManager<AsteliumAudioManager>(AUDIO_MANAGER_ID)
+                .playSelected(['/location.mp3']);                  
                 (parentModel as Layout).renderSelectedChildren([
-                    'ast-player', 'ast-advicer'
+                    PLAYER_I_ID, ADVICER_ID
                 ]);   
             }],
             ['Load', () => {      
@@ -76,9 +82,10 @@ export default class AsteliumMenu extends Menu {
                 this.registerEvents();
             }], 
             ['Continue', () => {
-                this.audioManager.playSelected(['/location.mp3']);                  
+                APP_ENGINE_INSTANCE.getManager<AsteliumAudioManager>(AUDIO_MANAGER_ID)
+                .playSelected(['/location.mp3']);                  
                 (parentModel as Layout).renderSelectedChildren([
-                    'ast-player', 'ast-advicer'
+                    PLAYER_I_ID, ADVICER_ID
                 ]);                  
             }]
         ]);
@@ -86,7 +93,7 @@ export default class AsteliumMenu extends Menu {
 
     private getSavedGamesItems(): Map<string, Callback> {
         const parentModel = APP_ENGINE_INSTANCE.getModel(this.parentSelector); 
-        const stateManager = (parentModel as Layout).stateManager;
+        const stateManager = APP_ENGINE_INSTANCE.getManager<AsteliumGameStateManager>(GAME_STATE_MANAGER_ID);
         let itemsMap = new Map<string, Callback>();        
         stateManager.savedGames.forEach((saved, index) => {
             itemsMap.set(`${index + 1}-${saved.name}`, () => {               
@@ -95,9 +102,10 @@ export default class AsteliumMenu extends Menu {
         });      
         itemsMap.set('Back', () => {          
             this.initializeView(this.getInGameItems());    
-            this.audioManager.playSelected(['/location.mp3']);                  
+            APP_ENGINE_INSTANCE.getManager<AsteliumAudioManager>(AUDIO_MANAGER_ID)
+            .playSelected(['/location.mp3']);                  
             (parentModel as Layout).renderSelectedChildren([
-                'ast-player', 'ast-advicer'
+                PLAYER_I_ID, ADVICER_ID
             ]);          
         });
         console.log('SavedGames', itemsMap);
@@ -106,9 +114,10 @@ export default class AsteliumMenu extends Menu {
 
     private hideView() {
         const parentModel = APP_ENGINE_INSTANCE.getModel(this.parentSelector); 
-        this.audioManager.playSelected(['/singleplayer.mp3', '/location.mp3']);                  
+        APP_ENGINE_INSTANCE.getManager<AsteliumAudioManager>(AUDIO_MANAGER_ID)
+        .playSelected(['/singleplayer.mp3', '/location.mp3']);                  
         (parentModel as Layout).renderSelectedChildren([
-            'ast-player', 'ast-advicer'
+            PLAYER_I_ID, ADVICER_ID
         ]);   
         this.initializeView(this.getInGameItems());   
         this.registerEvents();

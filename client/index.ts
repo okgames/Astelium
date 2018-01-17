@@ -5,13 +5,14 @@ import AsteliumGameStateManager from "client/data/astelium-gamestatemanager";
 import AsteliumGameLayout from "client/data/astelium-layout";
 import AsteliumPlayer from "client/data/astelium-player";
 import Advicer from "client/data/astelium-advicer";
-import { APP_ENGINE_INSTANCE } from "client/data/astelium-engine";
+import { APP_ENGINE_INSTANCE, AUDIO_MANAGER_ID, GAME_STATE_MANAGER_ID,
+     GAME_LAYOUT_ID, GAME_MENU_ID, ADVICER_ID, PLAYER_II_ID, PLAYER_I_ID } from "client/data/astelium-engine";
 
 
 document.addEventListener("DOMContentLoaded", () => {
     console.log('Document was loaded');
-    const audioManager = new AsteliumAudioManager();
-    const stateManager = new AsteliumGameStateManager();
+    const audioManager = new AsteliumAudioManager(AUDIO_MANAGER_ID);
+    const stateManager = new AsteliumGameStateManager(GAME_STATE_MANAGER_ID);
     audioManager.load([
         '/location.mp3',
         '/menu.mp3',
@@ -22,19 +23,30 @@ document.addEventListener("DOMContentLoaded", () => {
         '/slime.mp3',
         '/soul.mp3'
     ]);
+
+    APP_ENGINE_INSTANCE.registerManagers([
+        audioManager, stateManager
+    ]);
    
     APP_ENGINE_INSTANCE.loadModels([
-        new AsteliumGameLayout('game-layout', audioManager, null, true, stateManager),
-        new AsteliumMenu('ast-menu', audioManager, null, true),            
+        new AsteliumGameLayout(GAME_LAYOUT_ID, null, true),
+        new AsteliumMenu(GAME_MENU_ID, null, true),            
         new AsteliumPlayer(
-            'ast-player', audioManager, null, false,
+            PLAYER_I_ID, null, false,
             {
                 x: 0,
                 y: 0
             },              
         ),
+        new AsteliumPlayer(
+            PLAYER_II_ID, null, false,
+            {
+                x: 0,
+                y: 40
+            },              
+        ),
         new Advicer(
-            'ast-advicer', audioManager, null, false,
+            ADVICER_ID, null, false,
             {
                 x: 250,
                 y: 250
@@ -42,13 +54,14 @@ document.addEventListener("DOMContentLoaded", () => {
         )    
     ]);
 
-    const gameLayout = (APP_ENGINE_INSTANCE.getModel('game-layout') as AsteliumGameLayout);
-
+     // For singleplayer first
+    const gameLayout = APP_ENGINE_INSTANCE.getModel<AsteliumGameLayout>(GAME_LAYOUT_ID);
+    const player1 = APP_ENGINE_INSTANCE.getModel<AsteliumPlayer>(PLAYER_I_ID);   
     gameLayout.childModels = [
-        APP_ENGINE_INSTANCE.getModel('ast-menu'),
-        APP_ENGINE_INSTANCE.getModel('ast-player'),
-        APP_ENGINE_INSTANCE.getModel('ast-advicer')
-    ];
-  
+        APP_ENGINE_INSTANCE.getModel(GAME_MENU_ID),
+        APP_ENGINE_INSTANCE.getModel(PLAYER_I_ID),
+        APP_ENGINE_INSTANCE.getModel(ADVICER_ID)
+    ];  
     gameLayout.render('renderTarget', '/menu.mp3');
+    player1.init();    
 });

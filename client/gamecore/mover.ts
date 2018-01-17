@@ -36,7 +36,7 @@ export default abstract class Mover extends GameObject {
         = `${this.position.y}px`;
     }
 
-    public moveDown(pixels: number): void {
+    public moveDown(pixels: number): void {      
         this.changePositionY(pixels, Direction.DOWN);
         (document.querySelector(`#${this.selector}`) as HTMLElement).style.top
          = `${this.position.y}px`;
