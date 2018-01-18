@@ -24,7 +24,12 @@ const saveFile = (req, res) => {
 }
 
 const showAllSaveFiles = (req, res) => {
-    
+    fs.readdir(`${__dirname}/saves`, (err, list) => {
+        if(err) {
+            throw err;
+        }      
+        res.send({saves: list.map(save => save.replace(/.json/, ''))});       
+    });    
 }
 
 const loadFile = (req, res) => {    
@@ -42,7 +47,7 @@ server.restMapping = new Map<HttpRequest, RestCallback>([
         res.sendFile(`/index.html`);
     }],
     [{url: '/save', method: RequestMethod.POST}, saveFile],
-    [{url: '/showAllSaves', method: RequestMethod.POST}, showAllSaveFiles],
+    [{url: '/showAllSaves', method: RequestMethod.GET}, showAllSaveFiles],
     [{url: '/load', method: RequestMethod.POST}, loadFile],
 ]);
 
