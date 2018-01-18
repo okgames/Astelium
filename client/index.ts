@@ -62,6 +62,5 @@ document.addEventListener("DOMContentLoaded", () => {
         APP_ENGINE_INSTANCE.getModel(PLAYER_I_ID),
         APP_ENGINE_INSTANCE.getModel(ADVICER_ID)
     ];  
-    gameLayout.render('renderTarget', '/menu.mp3');
-    player1.init();    
+    gameLayout.render('renderTarget', '/menu.mp3');    
 });

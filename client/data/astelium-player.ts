@@ -20,7 +20,8 @@ export default class AsteliumPlayer extends Mover {
     }
 
     protected addMoveListeners(): void {      
-        document.addEventListener('keypress', (evt) => {         
+        document.querySelector<HTMLElement>(`#${this.selector}`)
+        .addEventListener('keypress', (evt) => {         
             switch(evt.key) {
                 case 'w': {                                  
                     this.moveUp(3);
@@ -45,7 +46,8 @@ export default class AsteliumPlayer extends Mover {
     }
 
     protected addActionListeners(): void {
-        document.addEventListener('keydown', (evt) => {       
+        document.querySelector<HTMLElement>(`#${this.selector}`)
+        .addEventListener('keydown', (evt) => {       
             const parentModel = APP_ENGINE_INSTANCE.getModel(this.parentSelector);              
             if(evt.key === 'Enter') {                  
                 console.log('Action is called');

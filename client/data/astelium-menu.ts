@@ -48,7 +48,7 @@ export default class AsteliumMenu extends Menu {
                 .playSelected(['/singleplayer.mp3', '/location.mp3']);                  
                 (parentModel as Layout).renderSelectedChildren([
                     PLAYER_I_ID, ADVICER_ID
-                ]);             
+                ]);  
             }],
             ['Multiplayer', () => {
                 APP_ENGINE_INSTANCE.getManager<AsteliumAudioManager>(AUDIO_MANAGER_ID)
@@ -95,20 +95,26 @@ export default class AsteliumMenu extends Menu {
         const parentModel = APP_ENGINE_INSTANCE.getModel(this.parentSelector); 
         const stateManager = APP_ENGINE_INSTANCE.getManager<AsteliumGameStateManager>(GAME_STATE_MANAGER_ID);
         let itemsMap = new Map<string, Callback>(); 
-        stateManager.showAllSaves('saves', '/showAllSaves');
-        stateManager.savedGames.forEach((saved, index) => {
-            itemsMap.set(`${index + 1}-${saved.name}`, () => {               
-                stateManager.load(saved.name, '/load').then(save => console.log('Save: ', save));
-            })
-        });      
-        itemsMap.set('Back', () => {          
+        stateManager.showAllSaves('/showAllSaves').then((saveNames) => {            
+            saveNames.forEach((name, index) => {
+                itemsMap.set(`${index + 1}-${name}`, () => {               
+                    stateManager.load(name, '/load').then(save => console.log('Save: ', save));
+                })
+            });      
+        });        
+        const backCallback = (this.actionItems === this.getInGameItems())
+        ? () => {
             this.initializeView(this.getInGameItems());    
             APP_ENGINE_INSTANCE.getManager<AsteliumAudioManager>(AUDIO_MANAGER_ID)
             .playSelected(['/location.mp3']);                  
             (parentModel as Layout).renderSelectedChildren([
                 PLAYER_I_ID, ADVICER_ID
-            ]);          
-        });      
+            ]);     
+        }
+        : () => {
+            this.initializeView(this.getBasicItems());         
+        }
+        itemsMap.set('Back', backCallback);       
         return itemsMap;
     }
 
