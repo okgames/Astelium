@@ -29,6 +29,7 @@ export default class GameStateManager extends Manager {
     }
 
     public save(saveName: string, url: string): void {        
+        console.log('Current State ', this._currentState)
         const save = {
             date: new Date().toLocaleTimeString("en-us", {
                 weekday: "long", year: "numeric", month: "short",  
@@ -53,8 +54,8 @@ export default class GameStateManager extends Manager {
         this._savedGames.push(save);       
     }
 
-    public showAllSaves(url: string): Promise<string[]> {           
-        return fetch('/showAllSaves',
+    public async showAllSaves(url: string): Promise<string[]> {           
+        return await fetch('/showAllSaves',
         {
             method: 'GET'
         })
@@ -67,7 +68,8 @@ export default class GameStateManager extends Manager {
         })       
     }
 
-    public load(saveName: string, url: string): Promise<SavedGame> {           
+    public load(saveName: string, url: string): Promise<SavedGame> {     
+        console.log('Save name', saveName);      
         return fetch('/load',
         {
             method: 'POST',   

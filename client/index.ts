@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
             AsteliumSelector.PLAYER_II_ID, null, false,
             {
                 x: 0,
-                y: 40
+                y: 100
             },              
         ),
         new Advicer(
@@ -51,15 +51,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 y: 250
             }
         )    
-    ]);
+    ])
 
-     // For singleplayer first
-    const gameLayout = APP_ENGINE_INSTANCE.getModel<AsteliumGameLayout>(AsteliumSelector.GAME_LAYOUT_ID);
-    const player1 = APP_ENGINE_INSTANCE.getModel<AsteliumPlayer>(AsteliumSelector.PLAYER_I_ID);   
-    gameLayout.childModels = [
+    const gameLayout = APP_ENGINE_INSTANCE.getModel<AsteliumGameLayout>(AsteliumSelector.GAME_LAYOUT_ID);   
+    gameLayout.setChildModels([
         APP_ENGINE_INSTANCE.getModel(AsteliumSelector.GAME_MENU_ID),
         APP_ENGINE_INSTANCE.getModel(AsteliumSelector.PLAYER_I_ID),
+        APP_ENGINE_INSTANCE.getModel(AsteliumSelector.PLAYER_II_ID),
         APP_ENGINE_INSTANCE.getModel(AsteliumSelector.ADVICER_ID)
-    ];  
-    gameLayout.render('renderTarget', '/menu.mp3');    
+    ]);  
+    console.log('CHILDS', gameLayout._childModels)
+    gameLayout.render('renderTarget');    
 });

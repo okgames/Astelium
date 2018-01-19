@@ -13,13 +13,12 @@ server.staticResources = [
     "client/static/views",    
 ];
 
-const saveFile = (req, res) => {
-    console.log(req.body);   
+const saveFile = (req, res) => {    
+    console.log('State', req.body.state.storage.players[0]);
     fs.appendFile(`${__dirname}/saves/${req.body.name}.json`, JSON.stringify(req.body), (err) => {
         if(err) {
             throw err;
-        } 
-        console.log('Game was saved!');
+        }         
     });   
 }
 
@@ -33,11 +32,10 @@ const showAllSaveFiles = (req, res) => {
 }
 
 const loadFile = (req, res) => {    
-    fs.readFile(`${__dirname}/saves/${req.body.name}.json`, 'utf8', (err, data) => {
+    fs.readFile(`${__dirname}/saves/${req.body.name}.json`, 'utf8', (err, data) => {        
         if(err) {
             throw err;
-        }        
-        res.setHeader('Content-type', 'application/json');
+        }
         res.send(JSON.parse(data)); 
     });     
 }

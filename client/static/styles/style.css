@@ -26,7 +26,7 @@ body {
     margin-right: auto;    
     height: 400px;
     width: 500px;
-    content: url(/Astelium.jpg)
+    /* content: url(/Astelium.jpg) */
 }
 
 button {
@@ -49,6 +49,13 @@ button {
 }
 
 #ast-player-1 {       
+    z-index: 9999;
+    position: absolute; 
+    content: url(/cthulhu.gif);
+    width: 5%;
+}
+
+#ast-player-2 {       
     z-index: 9999;
     position: absolute; 
     content: url(/cthulhu.gif);
