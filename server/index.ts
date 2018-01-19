@@ -1,6 +1,7 @@
-import {Server, RestCallback, HttpRequest, RequestMethod} from './server'
+import {Server, RestCallback, HttpRequest, RequestMethod, SocketCallback} from './server'
 const fs = require('fs');
 import * as path from 'path'
+import { AsteliumSelector } from 'client/data/astelium-engine';
 
 const server = new Server();
 
@@ -47,6 +48,26 @@ server.restMapping = new Map<HttpRequest, RestCallback>([
     [{url: '/save', method: RequestMethod.POST}, saveFile],
     [{url: '/showAllSaves', method: RequestMethod.GET}, showAllSaveFiles],
     [{url: '/load', method: RequestMethod.POST}, loadFile],
+]);
+
+server.socketMapping = new Map<string, SocketCallback>([
+    ['connection', (socketData) => {
+        this.emit({
+            players: [
+                {
+                    playerID: AsteliumSelector.PLAYER_I_ID
+                },
+                {
+                    playerID: AsteliumSelector.PLAYER_II_ID
+                }
+            ]
+        })
+    }],
+    ['disconnect', (socketData) => {
+        this.emit({
+            status: "DISCONNECTED"
+        })
+    }]    
 ]);
 
 server.start();

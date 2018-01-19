@@ -1,7 +1,14 @@
 import express from 'express'
 import bodyParser from 'body-parser'
+import socket from 'socket.io'
+const http = require('http')
+
 export interface RestCallback {
     (req?: any, res?: any, err?: Error): void
+}
+
+export interface SocketCallback {
+    (socketData: any): void
 }
 
 export enum RequestMethod {
@@ -21,6 +28,7 @@ export class Server {
     private _host: string;
     private _port: number;
     private _restMapping: Map<HttpRequest, RestCallback>;
+    private _socketMapping: Map<string, SocketCallback>
     private _staticResources: string[];
 
     constructor(host?: string, port?: number, restMapping?: Map<HttpRequest, RestCallback>,
@@ -57,6 +65,14 @@ export class Server {
         this._restMapping = restMapping;
     }
 
+    get socketMapping(): Map<string, SocketCallback> {
+        return this._socketMapping;
+    }
+
+    set socketMapping(socketMapping: Map<string, SocketCallback>) {     
+        this._socketMapping = socketMapping;
+    }
+
     get staticResources(): string[] {
         return this._staticResources;
     }
@@ -66,16 +82,23 @@ export class Server {
     }
 
     public start(): void {       
-        const SERVER_INSTANCE = express();
+        const APP = express();
         const ROOT_DIRECTORY = require('app-root-dir').get();      
-        SERVER_INSTANCE.use(bodyParser.urlencoded());
-        SERVER_INSTANCE.use(bodyParser.json());  
+        APP.use(bodyParser.urlencoded());
+        APP.use(bodyParser.json());  
         this._staticResources.forEach((folder) => {           
-            SERVER_INSTANCE.use(express.static(`${ROOT_DIRECTORY}/${folder}`));
+            APP.use(express.static(`${ROOT_DIRECTORY}/${folder}`));
         })       
         this._restMapping.forEach((callback, request) => {             
-            SERVER_INSTANCE[request.method](request.url, callback)
-        })
+            APP[request.method](request.url, callback)
+        });
+        const SERVER_INSTANCE = http.Server(APP); 
+        const IO = socket(SERVER_INSTANCE);       
+        IO.on('connection', (socket) => {
+            this.socketMapping.forEach((callback, event) => {
+                socket.on(event, callback);
+            }); 
+        });         
         SERVER_INSTANCE.listen(this._port, 
             () => console.log(`Server was started on http://${this._host}:${this._port}`))
     }
