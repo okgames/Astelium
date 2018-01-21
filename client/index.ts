@@ -8,8 +8,14 @@ import Advicer from "client/data/astelium-advicer";
 import { APP_ENGINE_INSTANCE, AsteliumSelector } from "client/data/astelium-engine";
 
 
-document.addEventListener("DOMContentLoaded", () => {
-    console.log('Document was loaded');
+document.addEventListener("DOMContentLoaded", () => {    
+    const socket = new WebSocket("ws://localhost:3000");
+
+    socket.onmessage = (event) => {
+        var incomingMessage = event.data;
+        console.log(incomingMessage);
+    };
+
     const audioManager = new AsteliumAudioManager(AsteliumSelector.AUDIO_MANAGER_ID);
     const stateManager = new AsteliumGameStateManager(AsteliumSelector.GAME_STATE_MANAGER_ID);
     audioManager.load([

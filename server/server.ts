@@ -1,6 +1,6 @@
 import express from 'express'
 import bodyParser from 'body-parser'
-import socket from 'socket.io'
+import WebSocket from 'ws'
 const http = require('http')
 
 export interface RestCallback {
@@ -83,23 +83,23 @@ export class Server {
 
     public start(): void {       
         const APP = express();
-        const ROOT_DIRECTORY = require('app-root-dir').get();      
+        const ROOT_DIRECTORY = require('app-root-dir').get();               
         APP.use(bodyParser.urlencoded());
         APP.use(bodyParser.json());  
         this._staticResources.forEach((folder) => {           
             APP.use(express.static(`${ROOT_DIRECTORY}/${folder}`));
-        })       
+        });                  
         this._restMapping.forEach((callback, request) => {             
             APP[request.method](request.url, callback)
         });
-        const SERVER_INSTANCE = http.Server(APP); 
-        const IO = socket(SERVER_INSTANCE);       
-        IO.on('connection', (socket) => {
-            this.socketMapping.forEach((callback, event) => {
-                socket.on(event, callback);
-            }); 
-        });         
+        const SERVER_INSTANCE = http.createServer(APP); 
+        const wss = new WebSocket.Server({ server: SERVER_INSTANCE});             
+        wss.on('connection', (ws: WebSocket) => {          
+            // this.socketMapping.forEach((callback, event) => {
+            //     ws.on(event, callback);
+            // }); 
+        });        
         SERVER_INSTANCE.listen(this._port, 
-            () => console.log(`Server was started on http://${this._host}:${this._port}`))
+            () => console.log(`Server was started on http://${this._host}:${this._port}`));   
     }
 }

@@ -3,7 +3,7 @@ const fs = require('fs');
 import * as path from 'path'
 import { AsteliumSelector } from 'client/data/astelium-engine';
 
-const server = new Server();
+const server = new Server('localhost', 3000);
 
 server.staticResources = [
     "client/static/audio",
@@ -50,24 +50,24 @@ server.restMapping = new Map<HttpRequest, RestCallback>([
     [{url: '/load', method: RequestMethod.POST}, loadFile],
 ]);
 
-server.socketMapping = new Map<string, SocketCallback>([
-    ['connection', (socketData) => {
-        this.emit({
-            players: [
-                {
-                    playerID: AsteliumSelector.PLAYER_I_ID
-                },
-                {
-                    playerID: AsteliumSelector.PLAYER_II_ID
-                }
-            ]
-        })
-    }],
-    ['disconnect', (socketData) => {
-        this.emit({
-            status: "DISCONNECTED"
-        })
-    }]    
-]);
+// server.socketMapping = new Map<string, SocketCallback>([
+//     ['connection', (socketData) => {
+//         this.emit({
+//             players: [
+//                 {
+//                     playerID: AsteliumSelector.PLAYER_I_ID
+//                 },
+//                 {
+//                     playerID: AsteliumSelector.PLAYER_II_ID
+//                 }
+//             ]
+//         })
+//     }],
+//     ['disconnect', (socketData) => {
+//         this.emit({
+//             status: "DISCONNECTED"
+//         })
+//     }]    
+// ]);
 
 server.start();
