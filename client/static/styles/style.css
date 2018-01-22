@@ -48,6 +48,13 @@ button {
     width: 100%;    
 }
 
+#ast-player {       
+    z-index: 9999;
+    position: absolute; 
+    content: url(/cthulhu.gif);
+    width: 5%;
+}
+
 #ast-player-1 {       
     z-index: 9999;
     position: absolute; 

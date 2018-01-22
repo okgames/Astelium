@@ -50,24 +50,13 @@ server.restMapping = new Map<HttpRequest, RestCallback>([
     [{url: '/load', method: RequestMethod.POST}, loadFile],
 ]);
 
-// server.socketMapping = new Map<string, SocketCallback>([
-//     ['connection', (socketData) => {
-//         this.emit({
-//             players: [
-//                 {
-//                     playerID: AsteliumSelector.PLAYER_I_ID
-//                 },
-//                 {
-//                     playerID: AsteliumSelector.PLAYER_II_ID
-//                 }
-//             ]
-//         })
-//     }],
-//     ['disconnect', (socketData) => {
-//         this.emit({
-//             status: "DISCONNECTED"
-//         })
-//     }]    
-// ]);
+server.socketMapping = new Map<string, SocketCallback>([   
+    ['message', (socketData) => {
+        console.log('Received message', socketData)
+    }],
+    ['close', (socketData) => {
+        console.log('Received error', socketData)
+    }]    
+]);
 
 server.start();

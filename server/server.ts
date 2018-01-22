@@ -93,11 +93,12 @@ export class Server {
             APP[request.method](request.url, callback)
         });
         const SERVER_INSTANCE = http.createServer(APP); 
-        const wss = new WebSocket.Server({ server: SERVER_INSTANCE});             
-        wss.on('connection', (ws: WebSocket) => {          
-            // this.socketMapping.forEach((callback, event) => {
-            //     ws.on(event, callback);
-            // }); 
+        const WEB_SOCKET_SERVER_INSTANCE = new WebSocket.Server({ server: SERVER_INSTANCE});             
+        WEB_SOCKET_SERVER_INSTANCE.on('connection', (ws: WebSocket) => {     
+            console.log('User was connected...');     
+            this._socketMapping.forEach((callback, event) => {
+                ws.on(event, callback);
+            }); 
         });        
         SERVER_INSTANCE.listen(this._port, 
             () => console.log(`Server was started on http://${this._host}:${this._port}`));   
