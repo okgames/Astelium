@@ -4,7 +4,7 @@ import AsteliumGameStateManager from "client/data/astelium-gamestatemanager";
 import Model from "client/gamecore/model";
 import Layout from "client/gamecore/layout";
 import GameObject from "client/gamecore/gameobject";
-import { APP_ENGINE_INSTANCE, AsteliumSelector } from "client/data/astelium-engine";
+import { AsteliumSelector, APP_ENGINE_INSTANCE } from "client/data/astelium-engine";
 import AsteliumAudioManager from "client/data/astelium-audiomanager";
 import AsteliumPlayer from "client/data/astelium-player";
 import Player from "client/gamecore/player";
@@ -73,18 +73,18 @@ export default class AsteliumMenu extends Menu {
                 APP_ENGINE_INSTANCE.getManager<AsteliumAudioManager>(AsteliumSelector.AUDIO_MANAGER_ID)
                     .playSelected(['/singleplayer.mp3', '/location.mp3']);                               
                 (parentModel as Layout).renderSelectedChildren(this.getGameObjectsSelectors());             
-                APP_ENGINE_INSTANCE.getModel<AsteliumPlayer>(AsteliumSelector.SINGLE_PLAYER_ID).init();        
+                APP_ENGINE_INSTANCE.currentPlayer.init();        
             }],
             ['Multiplayer', () => {
                 APP_ENGINE_INSTANCE.getManager<AsteliumAudioManager>(AsteliumSelector.AUDIO_MANAGER_ID)
                     .play('/multiplayer.mp3');
-                 const parentModel = APP_ENGINE_INSTANCE.getModel(this._parentSelector);                    
+                const parentModel = APP_ENGINE_INSTANCE.getModel(this._parentSelector);                    
                 this.initializeView(this.getInGameItems()); 
                 this.render(this._parentSelector);                      
                 APP_ENGINE_INSTANCE.getManager<AsteliumAudioManager>(AsteliumSelector.AUDIO_MANAGER_ID)
                     .playSelected(['/multiplayer.mp3', '/location.mp3']);                               
-                (parentModel as Layout).renderSelectedChildren(this.getGameObjectsSelectors());             
-                APP_ENGINE_INSTANCE.getModel<AsteliumPlayer>(AsteliumSelector.SINGLE_PLAYER_ID).init(); 
+                (parentModel as Layout).renderSelectedChildren(this.getGameObjectsSelectors());                        
+                APP_ENGINE_INSTANCE.currentPlayer.init(); 
                 // APP_ENGINE_INSTANCE.getModel<AsteliumPlayer>(AsteliumSelector.PLAYER_II_ID).init();                    
             }], 
             ['Back', this.backCallback()]
@@ -104,7 +104,7 @@ export default class AsteliumMenu extends Menu {
                 APP_ENGINE_INSTANCE.getManager<AsteliumAudioManager>(AsteliumSelector.AUDIO_MANAGER_ID)
                     .playSelected(['/location.mp3']);                  
                 (parentModel as Layout).renderSelectedChildren(this.getGameObjectsSelectors());                 
-                APP_ENGINE_INSTANCE.getModel<AsteliumPlayer>(AsteliumSelector.SINGLE_PLAYER_ID).init();        
+                APP_ENGINE_INSTANCE.currentPlayer.init();        
             }],
             ['Load', () => {      
                 this.getSavedGameItems().then((items) => {                  
@@ -119,7 +119,7 @@ export default class AsteliumMenu extends Menu {
                 APP_ENGINE_INSTANCE.getManager<AsteliumAudioManager>(AsteliumSelector.AUDIO_MANAGER_ID)
                     .playSelected(['/location.mp3']);                  
                 (parentModel as Layout).renderSelectedChildren(this.getGameObjectsSelectors());  
-                APP_ENGINE_INSTANCE.getModel<AsteliumPlayer>(AsteliumSelector.SINGLE_PLAYER_ID).init();                        
+                APP_ENGINE_INSTANCE.currentPlayer.init();                        
             }]
         ]);
     }
@@ -147,7 +147,7 @@ export default class AsteliumMenu extends Menu {
                             APP_ENGINE_INSTANCE.updateModel(pawn._selector, pawn);
                         });  
                         (parentModel as Layout).renderSelectedChildren(restoredObjects.map(obj => obj._selector));                      
-                        APP_ENGINE_INSTANCE.getModel<AsteliumPlayer>(AsteliumSelector.SINGLE_PLAYER_ID).init();           
+                        APP_ENGINE_INSTANCE.currentPlayer.init();           
                     }); 
                 });             
             });                

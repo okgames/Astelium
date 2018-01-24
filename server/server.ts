@@ -1,6 +1,6 @@
 import express from 'express'
 import bodyParser from 'body-parser'
-import WebSocket from 'ws'
+import Player from 'client/gamecore/player';
 const http = require('http')
 
 export interface RestCallback {
@@ -23,14 +23,12 @@ export type HttpRequest = {
     url: string
 }
 
-export class Server {
+export abstract class Server {
 
     private _host: string;
     private _port: number;
-    private _restMapping: Map<HttpRequest, RestCallback>;
-    private _socketMapping: Map<string, SocketCallback>
-    private _staticResources: string[];
-
+    private _restMapping: Map<HttpRequest, RestCallback>;    
+    private _staticResources: string[];  
     constructor(host?: string, port?: number, restMapping?: Map<HttpRequest, RestCallback>,
          staticResources?: string[]) {
         this._host = host || 'localhost';
@@ -38,7 +36,7 @@ export class Server {
         this._restMapping = restMapping || new Map<HttpRequest, RestCallback>([
             [{ url: this._host, method: RequestMethod.GET }, (req, res) => res.send('Whitelabel page...')]
         ]);
-        this._staticResources = staticResources || ['public', 'static'];
+        this._staticResources = staticResources || ['public', 'static'];        
     }
 
     get host(): string {
@@ -65,14 +63,6 @@ export class Server {
         this._restMapping = restMapping;
     }
 
-    get socketMapping(): Map<string, SocketCallback> {
-        return this._socketMapping;
-    }
-
-    set socketMapping(socketMapping: Map<string, SocketCallback>) {     
-        this._socketMapping = socketMapping;
-    }
-
     get staticResources(): string[] {
         return this._staticResources;
     }
@@ -81,6 +71,8 @@ export class Server {
         this._staticResources = staticResources;
     }
 
+    protected abstract enableSockets(serverInstance: any): void;
+   
     public start(): void {       
         const APP = express();
         const ROOT_DIRECTORY = require('app-root-dir').get();               
@@ -93,13 +85,7 @@ export class Server {
             APP[request.method](request.url, callback)
         });
         const SERVER_INSTANCE = http.createServer(APP); 
-        const WEB_SOCKET_SERVER_INSTANCE = new WebSocket.Server({ server: SERVER_INSTANCE});             
-        WEB_SOCKET_SERVER_INSTANCE.on('connection', (ws: WebSocket) => {     
-            console.log('User was connected...');     
-            this._socketMapping.forEach((callback, event) => {
-                ws.on(event, callback);
-            }); 
-        });        
+        this.enableSockets(SERVER_INSTANCE);
         SERVER_INSTANCE.listen(this._port, 
             () => console.log(`Server was started on http://${this._host}:${this._port}`));   
     }

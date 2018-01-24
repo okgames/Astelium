@@ -5,36 +5,17 @@ import AsteliumGameStateManager from "client/data/astelium-gamestatemanager";
 import AsteliumGameLayout from "client/data/astelium-layout";
 import AsteliumPlayer from "client/data/astelium-player";
 import Advicer from "client/data/astelium-advicer";
-import { APP_ENGINE_INSTANCE, AsteliumSelector } from "client/data/astelium-engine";
-import AsteliumMultiplayer from "client/data/astelium-multiplayer";
+import { AsteliumSelector, APP_ENGINE_INSTANCE } from "client/data/astelium-engine";
+import Player from "client/gamecore/player";
+import AsteliumNetworkManager from "client/data/astelium-networkmanager";
 
 
-document.addEventListener("DOMContentLoaded", () => {    
+document.addEventListener("DOMContentLoaded", () => {  
+
     const socket = new WebSocket("ws://localhost:3000");
-
-    socket.onopen = () => {     
-        socket.send(JSON.stringify({status: "Connected"}));  
-        console.log('Connected...');
-    }
-
-    socket.onmessage = (event) => {
-        const incomingMessage = event.data;
-        socket.send(JSON.stringify({status: 'Message was sent'}));
-        console.log('From server: ', incomingMessage);
-    };
-
-    socket.onclose = () => {
-        socket.send(JSON.stringify({status: 'Closed'}));
-        console.log('Closed connection...');
-    }
-
-    socket.onerror = (error) => {
-        socket.send(JSON.stringify({data: error}));
-    }
-
-    
     const audioManager = new AsteliumAudioManager(AsteliumSelector.AUDIO_MANAGER_ID);
     const stateManager = new AsteliumGameStateManager(AsteliumSelector.GAME_STATE_MANAGER_ID);
+    const networkManager = new AsteliumNetworkManager(AsteliumSelector.NETWORK_MANAGER_ID, socket);
     audioManager.load([
         '/location.mp3',
         '/menu.mp3',
@@ -47,35 +28,79 @@ document.addEventListener("DOMContentLoaded", () => {
     ]);
 
     APP_ENGINE_INSTANCE.registerManagers([
-        audioManager, stateManager
+        audioManager, stateManager, networkManager
     ]);
+
    
+    let currentPlayer;
+    let activePlayers = [] as AsteliumPlayer[];
+    let availablePlayers = [] as AsteliumPlayer[];
+
+   
+    socket.onopen = (event) => {           
+        console.log('Connected...');      
+        socket.send(JSON.stringify({type: 'connection-request', status: 'Opened'}));        
+        // socket.send(JSON.stringify({type: 'state-to-server', player: player1}));
+        socket.onmessage = (event) => {           
+            const serverData = JSON.parse(event.data);           
+            console.log('From server: ', serverData);
+            switch(serverData.type) {
+                case 'state-to-client': {                     
+                    APP_ENGINE_INSTANCE.updateModel(AsteliumSelector.PLAYER_I_ID, serverData.player);                          
+                    break;
+                }                
+                case 'connection-response-broadcast': {                    
+                    activePlayers = serverData.activePlayers.map((dtoPlayer) => {
+                      return Object.assign(new AsteliumPlayer(), dtoPlayer);  
+                    });   
+                    console.log("ACTIVE PLa", activePlayers);
+                    availablePlayers = serverData.availablePlayers;    
+                    APP_ENGINE_INSTANCE.activePlayers = activePlayers;
+                    APP_ENGINE_INSTANCE.loadModels(activePlayers); 
+                    activePlayers.forEach((player) => {
+                        APP_ENGINE_INSTANCE.getModel<AsteliumGameLayout>(AsteliumSelector.GAME_LAYOUT_ID)
+                            .appendChild(player);
+                    });       
+                    console.log('ENGINE', APP_ENGINE_INSTANCE.modelsMap.values());                               
+                    break;
+                }         
+                case 'connection-response-single': {
+                    currentPlayer = serverData.currentPlayer;                      
+                    APP_ENGINE_INSTANCE.currentPlayer = Object.assign(APP_ENGINE_INSTANCE
+                        .getModel<AsteliumPlayer>(currentPlayer._selector), currentPlayer);
+                    console.log('Current player', APP_ENGINE_INSTANCE.currentPlayer);                    
+                    break;
+                }               
+                case 'player': {
+                    console.log(JSON.stringify(serverData.players));                                  
+                    break;
+                }                   
+                default: {
+                    console.log('Unknown type of received data...');
+                    break;
+                }
+            }               
+        };   
+        window.onbeforeunload = (evt) => {
+            activePlayers.splice(activePlayers.indexOf(currentPlayer), 1);
+            availablePlayers.push(currentPlayer);            
+            socket.send(JSON.stringify({
+                type: 'before-unload',                
+                activePlayers,
+                availablePlayers
+            }));          
+        }            
+        socket.onclose = (event) => {
+            console.log('Closed connection...');             
+        };    
+        socket.onerror = (error) => {
+            socket.send(JSON.stringify(error));
+        };           
+    }      
+
     APP_ENGINE_INSTANCE.loadModels([
         new AsteliumGameLayout(AsteliumSelector.GAME_LAYOUT_ID, null, true),
-        new AsteliumMenu(AsteliumSelector.GAME_MENU_ID, null, true), 
-        new AsteliumPlayer(
-            AsteliumSelector.SINGLE_PLAYER_ID, null, false,
-            {
-                x: 0,
-                y: 0
-            }      
-        ),           
-        new AsteliumMultiplayer(
-            AsteliumSelector.PLAYER_I_ID, null, false,
-            {
-                x: 0,
-                y: 0
-            },        
-            socket      
-        ),
-        new AsteliumMultiplayer(
-            AsteliumSelector.PLAYER_II_ID, null, false,
-            {
-                x: 0,
-                y: 100
-            },              
-            socket
-        ),
+        new AsteliumMenu(AsteliumSelector.GAME_MENU_ID, null, true),                     
         new Advicer(
             AsteliumSelector.ADVICER_ID, null, false,
             {
@@ -83,16 +108,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 y: 250
             }
         )    
-    ])
+    ]);
+   
+    APP_ENGINE_INSTANCE.getModel<AsteliumGameLayout>(AsteliumSelector.GAME_LAYOUT_ID)
+        .setChildModels([
+            APP_ENGINE_INSTANCE.getModel(AsteliumSelector.GAME_MENU_ID),      
+            APP_ENGINE_INSTANCE.getModel(AsteliumSelector.ADVICER_ID)
+        ]);       
 
-    const gameLayout = APP_ENGINE_INSTANCE.getModel<AsteliumGameLayout>(AsteliumSelector.GAME_LAYOUT_ID);   
-    gameLayout.setChildModels([
-        APP_ENGINE_INSTANCE.getModel(AsteliumSelector.GAME_MENU_ID),
-        APP_ENGINE_INSTANCE.getModel(AsteliumSelector.SINGLE_PLAYER_ID),
-        APP_ENGINE_INSTANCE.getModel(AsteliumSelector.PLAYER_I_ID),
-        APP_ENGINE_INSTANCE.getModel(AsteliumSelector.PLAYER_II_ID),
-        APP_ENGINE_INSTANCE.getModel(AsteliumSelector.ADVICER_ID)
-    ]);  
-    console.log('CHILDS', gameLayout._childModels)
-    gameLayout.render('renderTarget');    
+    APP_ENGINE_INSTANCE.getModel<AsteliumGameLayout>(AsteliumSelector.GAME_LAYOUT_ID)
+        .render('renderTarget');    
 });

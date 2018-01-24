@@ -4,7 +4,7 @@ import AsteliumPlayer from "client/data/astelium-player";
 import Advicer from "client/data/astelium-advicer";
 import GameStateManager from "client/gamecore/gamestatemanager";
 import AsteliumMenu from "client/data/astelium-menu";
-import { APP_ENGINE_INSTANCE, AsteliumSelector } from "client/data/astelium-engine";
+import { AsteliumSelector } from "client/data/astelium-engine";
 import AsteliumAudioManager from "client/data/astelium-audiomanager";
 
 export default class AsteliumGameLayout extends Layout {

@@ -48,10 +48,11 @@ export default class Engine {
     }
 
     public updateModel<T extends Model>(selector: string, newModel: T): void {       
+        console.log('SELECT', selector);
         const parentModel = this._modelsMap.get(this._modelsMap.get(selector)._parentSelector);
         for(let child of parentModel._childModels) {
-            if(child._selector === selector) {
-                child = Object.assign(child, newModel);
+            if(child._selector === selector) {               
+                child = Object.assign(child as T, newModel as T);                
                 this._modelsMap.set(selector, child);
             }
         }

@@ -1,9 +1,10 @@
-import {Server, RestCallback, HttpRequest, RequestMethod, SocketCallback} from './server'
+import {RestCallback, HttpRequest, RequestMethod, SocketCallback} from './server'
 const fs = require('fs');
-import * as path from 'path'
-import { AsteliumSelector } from 'client/data/astelium-engine';
+import * as path from 'path';
+import { AsteliumServer, AsteliumPlayerDTO, AsteliumPlayerSelector } from 'server/astelium-server';
 
-const server = new Server('localhost', 3000);
+
+const server = new AsteliumServer();
 
 server.staticResources = [
     "client/static/audio",
@@ -13,6 +14,29 @@ server.staticResources = [
     "client/static/styles",
     "client/static/views",    
 ];
+
+server.availablePlayers = [
+    {
+        _selector: AsteliumPlayerSelector.PLAYER_I_ID,
+        _HTMLTemplate: null, 
+        _autoRendering: false,
+        _position: {
+            x: 0,
+            y: 0
+        }     
+    } as AsteliumPlayerDTO,
+    {
+        _selector: AsteliumPlayerSelector.PLAYER_II_ID,
+        _HTMLTemplate: null, 
+        _autoRendering: false,
+        _position: {
+            x: 0,
+            y: 100
+        }     
+    } as AsteliumPlayerDTO  
+];
+
+server.activePlayers = [];
 
 const saveFile = (req, res) => {    
     console.log('State', req.body.state.storage.players[0]);
@@ -48,15 +72,6 @@ server.restMapping = new Map<HttpRequest, RestCallback>([
     [{url: '/save', method: RequestMethod.POST}, saveFile],
     [{url: '/showAllSaves', method: RequestMethod.GET}, showAllSaveFiles],
     [{url: '/load', method: RequestMethod.POST}, loadFile],
-]);
-
-server.socketMapping = new Map<string, SocketCallback>([   
-    ['message', (socketData) => {
-        console.log('Received message', socketData)
-    }],
-    ['close', (socketData) => {
-        console.log('Received error', socketData)
-    }]    
 ]);
 
 server.start();

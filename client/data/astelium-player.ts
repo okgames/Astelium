@@ -1,21 +1,22 @@
 import Mover from "client/gamecore/mover";
 import Layout from "client/gamecore/layout";
 import GameObject from "client/gamecore/gameobject";
-import { APP_ENGINE_INSTANCE, AsteliumSelector} from "client/data/astelium-engine";
+import { AsteliumSelector, APP_ENGINE_INSTANCE} from "client/data/astelium-engine";
 import AudioManager from "client/gamecore/audiomanager";
 import { GameObjectPosition, Callback, GameObjectStorage} from "client/gamecore/common";
 import AsteliumGameStateManager from "client/data/astelium-gamestatemanager";
 import AsteliumAudioManager from "client/data/astelium-audiomanager";
 import Player from "client/gamecore/player";
 import Pawn from "client/gamecore/pawn";
+import AsteliumNetworkManager from "client/data/astelium-networkmanager";
 
 export default class AsteliumPlayer extends Player {
-     
-    constructor(selector?: string, HTMLTemplate?: string, autoRendering?: boolean,
-         position?: GameObjectPosition) {
+        
+    constructor(selector?: string, HTMLTemplate?: string, autoRendering?: boolean, 
+            position?: GameObjectPosition) {
         super(selector, HTMLTemplate, autoRendering, position);  
         this._moveEventListener = this.getMoveListener();     
-        this._actionEventListener = this.getActionListener();          
+        this._actionEventListener = this.getActionListener();      
     }
 
     private getMoveListener(): Callback {
@@ -49,7 +50,7 @@ export default class AsteliumPlayer extends Player {
             if(evt.key === 'Enter') {                  
                 console.log('Action is called');
             }                  
-            if(evt.key === 'Escape')  {                 
+            if(evt.key === 'Escape')  {             
                 APP_ENGINE_INSTANCE.getManager<AsteliumGameStateManager>(AsteliumSelector.GAME_STATE_MANAGER_ID)
                 .currentState = {
                     storage: {
@@ -67,7 +68,7 @@ export default class AsteliumPlayer extends Player {
             }      
         }
     }
-
+  
     protected addMoveListener(): void {      
         document.addEventListener('keypress', this._moveEventListener)      
     }
@@ -83,10 +84,34 @@ export default class AsteliumPlayer extends Player {
     protected removeActionListener(): void {
         document.removeEventListener('keydown', this._actionEventListener);
     }  
-    
-    public init(): void {      
+
+    public moveUp(pixels: number): void {
+        super.moveUp(pixels);        
+        APP_ENGINE_INSTANCE.updateModel(this._selector, this);
+        AsteliumNetworkManager.send(JSON.stringify({type: 'state-to-server', player: this}));      
+    }
+
+    public moveDown(pixels: number): void {
+        super.moveDown(pixels);     
+        APP_ENGINE_INSTANCE.updateModel(this._selector, this);
+        AsteliumNetworkManager.send(JSON.stringify({type: 'state-to-server', player: this}));       
+    }
+
+    public moveLeft(pixels: number): void {
+        super.moveLeft(pixels);
+        APP_ENGINE_INSTANCE.updateModel(this._selector, this);
+        AsteliumNetworkManager.send(JSON.stringify({type: 'state-to-server', player: this}));     
+    }
+
+    public moveRight(pixels: number): void {
+        super.moveRight(pixels);        
+        APP_ENGINE_INSTANCE.updateModel(this._selector, this);        
+        AsteliumNetworkManager.send(JSON.stringify({type: 'state-to-server', player: this}));       
+    }
+
+    public init(): void {       
         this.addMoveListener();
-        this.addActionListener();      
+        this.addActionListener();        
     }
 
     public pause(): void {

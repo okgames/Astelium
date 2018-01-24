@@ -27,6 +27,11 @@ export default abstract class Renderable implements Model {
         }        
     }
 
+    public appendChild(child: Model) {
+        child._parentSelector = this._selector;
+        this._childModels.push(child);
+    }
+
     public renderChild(childSelector: string) {      
         const child = this._childModels.find(child => child._selector === childSelector);      
         child.render(child._parentSelector);        
