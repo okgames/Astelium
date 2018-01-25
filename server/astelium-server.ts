@@ -98,8 +98,12 @@ export class AsteliumServer extends Server {
                     case 'before-unload': {
                         const data = JSON.parse(socketData);                      
                         this._activePlayers = data.activePlayers;
-                        this._availablePlayers = data.availablePlayers;
-                        console.log('UNLOAD', this._activePlayers, this._availablePlayers.length);
+                        this._availablePlayers = data.availablePlayers;                      
+                        WEB_SOCKET_SERVER_INSTANCE.broadcast(JSON.stringify({
+                            type: 'connection-response-broadcast',                                                    
+                            activePlayers: this._activePlayers,
+                            availablePlayers: this._availablePlayers
+                        }));                            
                         break;
                     }                 
                     default: {

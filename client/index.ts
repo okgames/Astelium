@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 activePlayers,
                 availablePlayers
             }));          
-        }            
+        }                 
         socket.onclose = (event) => {
             console.log('Closed connection...');             
         };    
