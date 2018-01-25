@@ -85,31 +85,32 @@ export default class AsteliumPlayer extends Player {
         document.removeEventListener('keydown', this._actionEventListener);
     }  
 
-    public moveUp(pixels: number): void {
-        super.moveUp(pixels);        
+    public moveUp(pixels: number): void {   
+        super.moveUp(pixels);              
         APP_ENGINE_INSTANCE.updateModel(this._selector, this);
-        AsteliumNetworkManager.send(JSON.stringify({type: 'state-to-server', player: this}));      
+        AsteliumNetworkManager.send(JSON.stringify({type: 'move-up-to-server', player: this}));      
     }
 
-    public moveDown(pixels: number): void {
-        super.moveDown(pixels);     
+    public moveDown(pixels: number): void {     
+        super.moveDown(pixels);      
         APP_ENGINE_INSTANCE.updateModel(this._selector, this);
-        AsteliumNetworkManager.send(JSON.stringify({type: 'state-to-server', player: this}));       
+        AsteliumNetworkManager.send(JSON.stringify({type: 'move-down-to-server', player: this}));       
     }
 
-    public moveLeft(pixels: number): void {
-        super.moveLeft(pixels);
+    public moveLeft(pixels: number): void { 
+        super.moveLeft(pixels);          
         APP_ENGINE_INSTANCE.updateModel(this._selector, this);
-        AsteliumNetworkManager.send(JSON.stringify({type: 'state-to-server', player: this}));     
+        AsteliumNetworkManager.send(JSON.stringify({type: 'move-left-to-server', player: this}));     
     }
 
-    public moveRight(pixels: number): void {
-        super.moveRight(pixels);        
+    public moveRight(pixels: number): void {       
+        super.moveRight(pixels);    
         APP_ENGINE_INSTANCE.updateModel(this._selector, this);        
-        AsteliumNetworkManager.send(JSON.stringify({type: 'state-to-server', player: this}));       
+        AsteliumNetworkManager.send(JSON.stringify({type: 'move-right-to-server', player: this}));       
     }
-
-    public init(): void {       
+    
+    public init(): void {        
+        // AsteliumNetworkManager.send(JSON.stringify({type: 'state-to-server', player: this}));     
         this.addMoveListener();
         this.addActionListener();        
     }

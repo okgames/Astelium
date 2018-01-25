@@ -45,7 +45,7 @@ export default class AsteliumMenu extends Menu {
             ['New game', () => {             
                 this.initializeView(this.getNewGameItems());                                 
                 APP_ENGINE_INSTANCE.getManager<AsteliumAudioManager>(AsteliumSelector.AUDIO_MANAGER_ID)
-                    .play('/newgame.mp3'); 
+                    .playSelected(['/newgame.mp3']); 
                 this.render(this._parentSelector);                    
             }],
             ['Load', () => {               
@@ -67,25 +67,23 @@ export default class AsteliumMenu extends Menu {
     private getNewGameItems(): Map<string, Callback> {
         return new Map<string, Callback>([
             ['SinglePlayer', () => {     
+                APP_ENGINE_INSTANCE.getManager<AsteliumAudioManager>(AsteliumSelector.AUDIO_MANAGER_ID)
+                    .playSelected(['/singleplayer.mp3', '/location.mp3']);   
                 const parentModel = APP_ENGINE_INSTANCE.getModel(this._parentSelector);                    
                 this.initializeView(this.getInGameItems()); 
-                this.render(this._parentSelector);                      
-                APP_ENGINE_INSTANCE.getManager<AsteliumAudioManager>(AsteliumSelector.AUDIO_MANAGER_ID)
-                    .playSelected(['/singleplayer.mp3', '/location.mp3']);                               
+                this.render(this._parentSelector);                                            
                 (parentModel as Layout).renderSelectedChildren(this.getGameObjectsSelectors());             
                 APP_ENGINE_INSTANCE.currentPlayer.init();        
             }],
             ['Multiplayer', () => {
                 APP_ENGINE_INSTANCE.getManager<AsteliumAudioManager>(AsteliumSelector.AUDIO_MANAGER_ID)
-                    .play('/multiplayer.mp3');
-                const parentModel = APP_ENGINE_INSTANCE.getModel(this._parentSelector);                    
+                    .playSelected(['/multiplayer.mp3', '/location.mp3']);
+                const parentModel = APP_ENGINE_INSTANCE.getModel(this._parentSelector);      
+                console.log('CHILDREN', parentModel._childModels);              
                 this.initializeView(this.getInGameItems()); 
-                this.render(this._parentSelector);                      
-                APP_ENGINE_INSTANCE.getManager<AsteliumAudioManager>(AsteliumSelector.AUDIO_MANAGER_ID)
-                    .playSelected(['/multiplayer.mp3', '/location.mp3']);                               
+                this.render(this._parentSelector);                                             
                 (parentModel as Layout).renderSelectedChildren(this.getGameObjectsSelectors());                        
-                APP_ENGINE_INSTANCE.currentPlayer.init(); 
-                // APP_ENGINE_INSTANCE.getModel<AsteliumPlayer>(AsteliumSelector.PLAYER_II_ID).init();                    
+                APP_ENGINE_INSTANCE.currentPlayer.init();                                 
             }], 
             ['Back', this.backCallback()]
         ]);

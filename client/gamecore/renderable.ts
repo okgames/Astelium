@@ -28,8 +28,13 @@ export default abstract class Renderable implements Model {
     }
 
     public appendChild(child: Model) {
-        child._parentSelector = this._selector;
-        this._childModels.push(child);
+        const index = this._childModels.findIndex(ch => ch._selector === child._selector);       
+        if(index === -1) {
+            child._parentSelector = this._selector;
+            this._childModels.push(child);
+        } else {
+            this._childModels[index] = child;
+        }    
     }
 
     public renderChild(childSelector: string) {      

@@ -2,10 +2,7 @@ import Model from "client/gamecore/model";
 import AudioManager from "client/gamecore/audiomanager";
 import GameStateManager from "client/gamecore/gamestatemanager";
 import GameObject from "client/gamecore/gameobject";
-
-enum Direction {
-    UP, DOWN, LEFT, RIGHT
-}
+import { Direction } from "client/gamecore/physicsmanager";
 
 export default abstract class Mover extends GameObject {   
 
@@ -34,29 +31,19 @@ export default abstract class Mover extends GameObject {
     }
 
     public moveUp(pixels: number): void {
-        this.changePositionY(pixels, Direction.UP);
-        (document.querySelector(`#${this._selector}`) as HTMLElement).style.top 
-        = `${this._position.y}px`;
+        this.changePositionY(pixels, Direction.UP);       
     }
 
     public moveDown(pixels: number): void {      
-        this.changePositionY(pixels, Direction.DOWN);
-        (document.querySelector(`#${this._selector}`) as HTMLElement).style.top
-         = `${this._position.y}px`;
+        this.changePositionY(pixels, Direction.DOWN);        
     }
 
     public moveLeft(pixels: number): void {
-        this.changePositionX(pixels, Direction.LEFT);
-        (document.querySelector(`#${this._selector}`) as HTMLElement).style.transform = 'scaleX(1)';
-        (document.querySelector(`#${this._selector}`) as HTMLElement).style.left
-         = `${this._position.x}px`;
+        this.changePositionX(pixels, Direction.LEFT);      
     }
 
     public moveRight(pixels: number): void {
-        this.changePositionX(pixels, Direction.RIGHT);
-        (document.querySelector(`#${this._selector}`) as HTMLElement).style.transform = 'scaleX(-1)';
-        (document.querySelector(`#${this._selector}`) as HTMLElement).style.left
-         = `${this._position.x}px`;
+        this.changePositionX(pixels, Direction.RIGHT);      
     }
 
     public rotate(angle: number): void {

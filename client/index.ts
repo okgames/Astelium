@@ -1,6 +1,5 @@
 import AsteliumMenu from "client/data/astelium-menu";
 import AsteliumAudioManager from "client/data/astelium-audiomanager";
-import Layout from "client/gamecore/layout";
 import AsteliumGameStateManager from "client/data/astelium-gamestatemanager";
 import AsteliumGameLayout from "client/data/astelium-layout";
 import AsteliumPlayer from "client/data/astelium-player";
@@ -8,6 +7,8 @@ import Advicer from "client/data/astelium-advicer";
 import { AsteliumSelector, APP_ENGINE_INSTANCE } from "client/data/astelium-engine";
 import Player from "client/gamecore/player";
 import AsteliumNetworkManager from "client/data/astelium-networkmanager";
+import Mover from "client/gamecore/mover";
+import AsteliumPhysicsManager from "client/data/astelium-physicsmanager";
 
 
 document.addEventListener("DOMContentLoaded", () => {  
@@ -15,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const socket = new WebSocket("ws://localhost:3000");
     const audioManager = new AsteliumAudioManager(AsteliumSelector.AUDIO_MANAGER_ID);
     const stateManager = new AsteliumGameStateManager(AsteliumSelector.GAME_STATE_MANAGER_ID);
+    const physicsManager = new AsteliumPhysicsManager(AsteliumSelector.PHYSICS_MANAGER_ID);
     const networkManager = new AsteliumNetworkManager(AsteliumSelector.NETWORK_MANAGER_ID, socket);
     audioManager.load([
         '/location.mp3',
@@ -28,66 +30,26 @@ document.addEventListener("DOMContentLoaded", () => {
     ]);
 
     APP_ENGINE_INSTANCE.registerManagers([
-        audioManager, stateManager, networkManager
+        audioManager, stateManager, networkManager, physicsManager
     ]);
-
    
-    let currentPlayer;
-    let activePlayers = [] as AsteliumPlayer[];
-    let availablePlayers = [] as AsteliumPlayer[];
-
    
     socket.onopen = (event) => {           
         console.log('Connected...');      
-        socket.send(JSON.stringify({type: 'connection-request', status: 'Opened'}));        
-        // socket.send(JSON.stringify({type: 'state-to-server', player: player1}));
+        socket.send(JSON.stringify({type: 'connection-request', status: 'Opened'}));            
         socket.onmessage = (event) => {           
             const serverData = JSON.parse(event.data);           
             console.log('From server: ', serverData);
-            switch(serverData.type) {
-                case 'state-to-client': {                     
-                    APP_ENGINE_INSTANCE.updateModel(AsteliumSelector.PLAYER_I_ID, serverData.player);                          
-                    break;
-                }                
-                case 'connection-response-broadcast': {                    
-                    activePlayers = serverData.activePlayers.map((dtoPlayer) => {
-                      return Object.assign(new AsteliumPlayer(), dtoPlayer);  
-                    });   
-                    console.log("ACTIVE PLa", activePlayers);
-                    availablePlayers = serverData.availablePlayers;    
-                    APP_ENGINE_INSTANCE.activePlayers = activePlayers;
-                    APP_ENGINE_INSTANCE.loadModels(activePlayers); 
-                    activePlayers.forEach((player) => {
-                        APP_ENGINE_INSTANCE.getModel<AsteliumGameLayout>(AsteliumSelector.GAME_LAYOUT_ID)
-                            .appendChild(player);
-                    });       
-                    console.log('ENGINE', APP_ENGINE_INSTANCE.modelsMap.values());                               
-                    break;
-                }         
-                case 'connection-response-single': {
-                    currentPlayer = serverData.currentPlayer;                      
-                    APP_ENGINE_INSTANCE.currentPlayer = Object.assign(APP_ENGINE_INSTANCE
-                        .getModel<AsteliumPlayer>(currentPlayer._selector), currentPlayer);
-                    console.log('Current player', APP_ENGINE_INSTANCE.currentPlayer);                    
-                    break;
-                }               
-                case 'player': {
-                    console.log(JSON.stringify(serverData.players));                                  
-                    break;
-                }                   
-                default: {
-                    console.log('Unknown type of received data...');
-                    break;
-                }
-            }               
+            APP_ENGINE_INSTANCE.SOCKET_SERVER_MESSAGES.get(serverData.type)(serverData);         
         };   
         window.onbeforeunload = (evt) => {
-            activePlayers.splice(activePlayers.indexOf(currentPlayer), 1);
-            availablePlayers.push(currentPlayer);            
+            APP_ENGINE_INSTANCE.activePlayers.splice(APP_ENGINE_INSTANCE.activePlayers
+                .indexOf(APP_ENGINE_INSTANCE.currentPlayer), 1);
+            APP_ENGINE_INSTANCE.availablePlayers.push(APP_ENGINE_INSTANCE.currentPlayer);            
             socket.send(JSON.stringify({
                 type: 'before-unload',                
-                activePlayers,
-                availablePlayers
+                activePlayers: APP_ENGINE_INSTANCE.activePlayers,
+                availablePlayers: APP_ENGINE_INSTANCE.availablePlayers
             }));          
         }                 
         socket.onclose = (event) => {
