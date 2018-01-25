@@ -6,3 +6,7 @@ To start the game:
 3) Navigate to the `server` subfolder
 4) Run `node index` to launch the server
 5) Go to the `http://localhost:3000` and start the game
+
+To deploy the game on Heroku:
+Install the runtime-dyno-metadata addon:
+1) heroku labs:enable runtime-dyno-metadata -a %appname%
