@@ -16,8 +16,8 @@ export type GameState = {
 }
 
 export type GameObjectStorage = {
-     players: Player[]
-     pawns: Pawn[] 
+    players: Player[]
+    pawns: Pawn[] 
 }
 
 export type SavedGame = {
