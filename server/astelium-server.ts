@@ -88,7 +88,7 @@ export class AsteliumServer extends Server {
     constructor(host?: string, port?: number, restMapping?: Map<HttpRequest, RestCallback>,
          staticResources?: string[], availablePlayers?: AsteliumPlayerDTO[],
          activePlayers?: AsteliumPlayerDTO[]) {
-        super();         
+        super(host, port, restMapping, staticResources);         
         this._availablePlayers = availablePlayers || [];     
         this._activePlayers = activePlayers || [];
     }
