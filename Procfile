@@ -1,1 +1,1 @@
-web: node server/index.js
+web: node server/index.js astelium.herokuapp.com

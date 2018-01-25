@@ -5,7 +5,7 @@ import { AsteliumServer, AsteliumPlayerDTO, AsteliumPlayerSelector } from 'serve
 
 
 const port = process.env.PORT;
-const host = process.env.HEROKU_APP_NAME + "herokuapp.com";
+const host = process.argv[2];
 const server = new AsteliumServer(host, port);
 
 server.staticResources = [
