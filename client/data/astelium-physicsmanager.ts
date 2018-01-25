@@ -9,7 +9,7 @@ export default class AsteliumPhysicsManager extends PhysicsManager {
         if(direction === Direction.LEFT) {
             document.querySelector<HTMLElement>(`#${selector}`)
                 .style.transform = 'scaleX(1)';    
-        } else {
+        } else if(direction === Direction.RIGHT){
             document.querySelector<HTMLElement>(`#${selector}`)
                 .style.transform = 'scaleX(-1)';    
         }          
