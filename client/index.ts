@@ -11,9 +11,9 @@ import Mover from "client/gamecore/mover";
 import AsteliumPhysicsManager from "client/data/astelium-physicsmanager";
 
 
-document.addEventListener("DOMContentLoaded", () => {  
+document.addEventListener("DOMContentLoaded", async () => {  
     
-    fetch('/app-url',
+    await fetch('/app-url',
     {
         method: 'GET'
     })
