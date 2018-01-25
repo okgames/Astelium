@@ -21,7 +21,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         return res.json(); 
     })
     .then((data) => {      
-        const socket = new WebSocket(`ws://${data.host}:${data.port}`);       
+        //const socket = new WebSocket(`ws://${data.host}:${data.port}`);       
+        const socket = new WebSocket(`ws://${data.host}`);
         socket.onopen = (event) => {           
             console.log('Connected...');      
             socket.send(JSON.stringify({type: 'connection-request', status: 'Opened'}));            
