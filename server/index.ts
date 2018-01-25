@@ -4,7 +4,8 @@ import * as path from 'path';
 import { AsteliumServer, AsteliumPlayerDTO, AsteliumPlayerSelector } from 'server/astelium-server';
 
 
-const server = new AsteliumServer();
+const port = process.env.PORT;
+const server = new AsteliumServer('localhost', port);
 
 server.staticResources = [
     "client/static/audio",
