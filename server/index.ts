@@ -73,6 +73,9 @@ server.restMapping = new Map<HttpRequest, RestCallback>([
     [{url: '/save', method: RequestMethod.POST}, saveFile],
     [{url: '/showAllSaves', method: RequestMethod.GET}, showAllSaveFiles],
     [{url: '/load', method: RequestMethod.POST}, loadFile],
+    [{url: '/app-url', method: RequestMethod.GET}, (req, res) => {
+        res.send({host: server.host, port: server.port});
+    }],
 ]);
 
 server.start();
