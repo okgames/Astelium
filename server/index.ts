@@ -4,7 +4,7 @@ import * as path from 'path';
 import { AsteliumServer, AsteliumPlayerDTO, AsteliumPlayerSelector } from 'server/astelium-server';
 
 
-var port = process.env.PORT;
+const port = process.env.PORT;
 const server = new AsteliumServer('localhost', port);
 
 server.staticResources = [
